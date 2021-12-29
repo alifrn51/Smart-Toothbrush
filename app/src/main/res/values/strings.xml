@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartToothbrush</string>
+    <string name="app_name">Meditradent</string>
     <string name="messages">Messages:</string>
     <string name="message">Message</string>
     <string name="send">Send</string>
@@ -17,7 +17,13 @@
     <string name="bluetooth_unavailable">Connection Failed.</string>
     <string name="message_send_error">Error sending message!</string>
     <string name="you_sent">You</string>
-
+    <string name="create_user">Create User</string>
+    <string name="continue_txt">Continue</string>
+    <string name="enter_user_name">Enter user name</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="setting_chart">Setting Chart</string>
+    <string name="chart_interval">Chart interval</string>
 
 
 </resources>

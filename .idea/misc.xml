@@ -3,10 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_btn.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_edt.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_shadow_edt.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/ic_connect.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/ic_disconnect.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_chart.xml" value="0.12708333333333333" />
-        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_communicate.xml" value="0.12708333333333333" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_communicate.xml" value="0.2" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_create.xml" value="0.152" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_main.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/activity_test_chart.xml" value="0.25" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/dialog_class_name.xml" value="0.4" />
+        <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/dialog_setting.xml" value="0.1" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/layout/list_item.xml" value="0.25" />
       </map>
     </option>
@@ -16,5 +24,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.2" />
+      </ProjectState>
+    </option>
   </component>
 </project>
