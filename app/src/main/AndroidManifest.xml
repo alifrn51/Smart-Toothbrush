@@ -17,7 +17,7 @@
         android:theme="@style/Theme.SmartToothbrush">
         <activity
             android:name=".ui.createUser.CreateActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".TestChart"
             android:exported="true"/>

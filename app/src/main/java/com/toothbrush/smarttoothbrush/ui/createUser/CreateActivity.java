@@ -56,6 +56,7 @@ public class CreateActivity extends AppCompatActivity {
             folderUsername.mkdirs();
         }
 
+        binding.edtName.setText("");
         Intent intent = new Intent(this, CommunicateActivity.class);
         intent.putExtra("device_name", deviceName);
         intent.putExtra("device_mac", macAddress);

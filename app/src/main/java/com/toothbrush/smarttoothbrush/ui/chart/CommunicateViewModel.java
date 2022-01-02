@@ -53,6 +53,8 @@ public class CommunicateViewModel extends AndroidViewModel {
 
     private boolean isStart;
 
+    private boolean saveData;
+
     // Our modifiable record of the conversation
     private StringBuilder messages = new StringBuilder();
 
@@ -179,7 +181,9 @@ public class CommunicateViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         // Dispose any asynchronous operations that are running
-        compositeDisposable.dispose();
+        if (compositeDisposable!=null)
+            compositeDisposable.dispose();
+
         // Shutdown bluetooth connections
         bluetoothManager.close();
     }
@@ -201,12 +205,12 @@ public class CommunicateViewModel extends AndroidViewModel {
 
 
     public int getNumberClassName() {
-        return numberClassName++;
+        return numberClassName;
     }
 
-
-
-
+    public void setNumberClassName() {
+        this.numberClassName++;
+    }
 
     //Timer
     public void startTimer() {
@@ -217,7 +221,7 @@ public class CommunicateViewModel extends AndroidViewModel {
                 .subscribe(new Observer<Long>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
-
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -265,6 +269,15 @@ public class CommunicateViewModel extends AndroidViewModel {
 
     public boolean isStart() {
         return isStart;
+    }
+
+
+    public boolean isSaveData() {
+        return saveData;
+    }
+
+    public void setSaveData(boolean saveData) {
+        this.saveData = saveData;
     }
 
     public void setStart(boolean start) {
