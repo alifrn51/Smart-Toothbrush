@@ -1,6 +1,8 @@
 package com.toothbrush.smarttoothbrush.ui.chart.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,16 +13,19 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.toothbrush.smarttoothbrush.databinding.DialogClassNameBinding;
+import com.toothbrush.smarttoothbrush.di.SoftInputUtils;
 
-public class CreateClassDialog extends AlertDialog {
+public class CreateClassDialog extends Dialog {
 
     private DialogClassNameBinding binding;
+    private Activity activity;
     private String userName;
     private int numberNameClass;
     private OnClickCreateClassListener listener;
 
-    public CreateClassDialog(Context context ,String userName,int numberNameClass, OnClickCreateClassListener listener) {
+    public CreateClassDialog(Context context, Activity activity, String userName, int numberNameClass, OnClickCreateClassListener listener) {
         super(context);
+        this.activity = activity;
         this.userName = userName;
         this.numberNameClass = numberNameClass;
         this.listener = listener;
@@ -45,19 +50,27 @@ public class CreateClassDialog extends AlertDialog {
 
         }
 
-        binding.edtName.setText(userName+"_class_"+numberNameClass);
+        binding.edtName.setText(userName + "_class_" + numberNameClass);
+        binding.edtName.requestFocus();
+        binding.edtName.setSelection(binding.edtName.getText().length());
+        SoftInputUtils.showSoftInput(activity);
 
         binding.btnStart.setOnClickListener(view -> {
             listener.onStart(binding.edtName.getText().toString());
+            SoftInputUtils.showSoftInput(activity);
         });
 
-        binding.btnCancel.setOnClickListener(view -> listener.onCancel());
+        binding.btnCancel.setOnClickListener(view -> {
+            listener.onCancel();
+            SoftInputUtils.showSoftInput(activity);
+        });
 
 
     }
 
-    public interface OnClickCreateClassListener{
+    public interface OnClickCreateClassListener {
         void onStart(String address);
+
         void onCancel();
     }
 }

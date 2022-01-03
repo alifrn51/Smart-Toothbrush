@@ -2,6 +2,7 @@ package com.toothbrush.smarttoothbrush.ui.chart.dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,11 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.toothbrush.smarttoothbrush.databinding.DialogSettingBinding;
 import com.toothbrush.smarttoothbrush.di.SoftInputUtils;
 
-public class SettingChartDialog extends AlertDialog {
+public class SettingChartDialog extends Dialog {
 
 
     private DialogSettingBinding binding;
@@ -56,28 +58,19 @@ public class SettingChartDialog extends AlertDialog {
         }
 
 
-        binding.edtIntervalChart.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                  SoftInputUtils.showSoftInput(activity);
-
-                }
-            }
-        });
-
-
         binding.edtIntervalChart.setText(intervalChart + "");
+        binding.edtIntervalChart.requestFocus();
+        binding.edtIntervalChart.setSelection(binding.edtIntervalChart.getText().length());
+        SoftInputUtils.showSoftInput(activity);
 
         binding.btnCancel.setOnClickListener(view -> {
             listener.onCancel();
-
+            SoftInputUtils.showSoftInput(activity);
         });
         binding.btnSave.setOnClickListener(view -> {
 
             listener.onIntervalChartValue(Float.parseFloat(binding.edtIntervalChart.getText().toString()));
-
+            SoftInputUtils.showSoftInput(activity);
         });
 
 
@@ -89,5 +82,7 @@ public class SettingChartDialog extends AlertDialog {
 
         void onCancel();
     }
+
+
 
 }

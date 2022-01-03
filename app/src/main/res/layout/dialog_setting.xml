@@ -28,6 +28,8 @@
             android:hint="@string/chart_interval"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:paddingStart="8dp"
             android:textSize="14sp"
             android:textColor="@color/black"

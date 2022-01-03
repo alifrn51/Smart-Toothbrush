@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.SmartToothbrush" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/orang</item>
+        <item name="colorPrimary">@color/blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/black</item>
@@ -12,6 +12,7 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
         <item name="backgroundColorPages">@color/grayLite</item>
+        <item name="colorErrorText">@color/red</item>
     </style>
 
 </resources>

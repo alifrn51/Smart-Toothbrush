@@ -1,16 +1,11 @@
 package com.toothbrush.smarttoothbrush.ui.chart;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -34,9 +29,6 @@ import com.toothbrush.smarttoothbrush.di.sharepreferences.MyPref;
 import com.toothbrush.smarttoothbrush.ui.chart.dialog.AskExitDialog;
 import com.toothbrush.smarttoothbrush.ui.chart.dialog.CreateClassDialog;
 import com.toothbrush.smarttoothbrush.ui.chart.dialog.SettingChartDialog;
-import com.waspar.falert.DoubleButtonListener;
-import com.waspar.falert.Falert;
-import com.waspar.falert.FalertButtonType;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -119,8 +111,6 @@ public class CommunicateActivity extends AppCompatActivity {
 
         binding.btnStart.setOnClickListener(view -> {
             viewModel.connect();
-
-
             onConnectionStatusForStart(connectionStatusForStart);
 
         });
@@ -301,7 +291,7 @@ public class CommunicateActivity extends AppCompatActivity {
     private void showDialogAddClass() {
 
 
-        dialog = new CreateClassDialog(this, username, viewModel.getNumberClassName(), new CreateClassDialog.OnClickCreateClassListener() {
+        dialog = new CreateClassDialog(this,this ,  username, viewModel.getNumberClassName(), new CreateClassDialog.OnClickCreateClassListener() {
             @Override
             public void onStart(String address) {
 
@@ -415,7 +405,7 @@ public class CommunicateActivity extends AppCompatActivity {
             setX = new LineDataSet(values1, "X");
 
             setX.setAxisDependency(YAxis.AxisDependency.LEFT);
-            setX.setLineWidth(3f);
+            setX.setLineWidth(1.5f);
             setX.setColor(getResources().getColor(R.color.green));
             setX.setHighlightEnabled(false);
             setX.setDrawValues(false);
@@ -431,7 +421,7 @@ public class CommunicateActivity extends AppCompatActivity {
             // create a dataset and give it a type
             setY = new LineDataSet(values2, "Y");
             setY.setAxisDependency(YAxis.AxisDependency.LEFT);
-            setY.setLineWidth(3f);
+            setY.setLineWidth(1.5f);
             setY.setColor(getResources().getColor(R.color.blue));
             setY.setHighlightEnabled(false);
             setY.setDrawValues(false);
@@ -442,7 +432,7 @@ public class CommunicateActivity extends AppCompatActivity {
 
             setZ = new LineDataSet(values3, "Z");
             setZ.setAxisDependency(YAxis.AxisDependency.LEFT);
-            setZ.setLineWidth(3f);
+            setZ.setLineWidth(1.5f);
             setZ.setColor(getResources().getColor(R.color.red));
             setZ.setHighlightEnabled(false);
             setZ.setDrawValues(false);
@@ -471,6 +461,7 @@ public class CommunicateActivity extends AppCompatActivity {
                 gpxfile = new File(
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getString(R.string.app_name) + "/" + username,
                         sFileName + ".txt");
+
             FileWriter writer = new FileWriter(gpxfile, true);
             writer.append(sBody).append("\n\r");
             writer.flush();
