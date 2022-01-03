@@ -8,5 +8,5 @@ dependencyResolutionManagement {
 
     }
 }
-rootProject.name = "SmartToothbrush"
+rootProject.name = "Meditradent"
 include ':app'
