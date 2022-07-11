@@ -2,30 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.meditradent.meditradent">
 
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".di.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".di.App"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartToothbrush">
         <activity
-            android:name=".ui.createUser.CreateActivity"
-            android:exported="true" />
-        <activity
-            android:name=".TestChart"
-            android:exported="true"/>
-        <activity
-            android:name=".ChartActivity"
-            android:exported="true"/>
-        <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,8 +30,21 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.createUser.CreateActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TestChart"
+            android:exported="true" />
+        <activity
+            android:name=".ChartActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".ui.chart.CommunicateActivity"
-            android:exported="true"/>
+            android:exported="true" />
     </application>
 
 </manifest>

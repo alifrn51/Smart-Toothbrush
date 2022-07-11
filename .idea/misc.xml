@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/Smart-Toothbrush/app/src/main/res/layout/activity_communicate.xml" value="0.3625" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/Smart-Toothbrush/app/src/main/res/layout/dialog_ask_exit.xml" value="0.3625" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/Smart-Toothbrush/app/src/main/res/layout/dialog_get_permission.xml" value="0.3625" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_btn.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_edt.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/alifo/AndroidStudioProjects/SmartToothbrush/app/src/main/res/drawable/bg_shadow_edt.xml" value="0.26614583333333336" />

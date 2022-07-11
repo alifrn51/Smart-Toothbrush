@@ -2,6 +2,7 @@ package com.meditradent.meditradent.ui.chart;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
@@ -12,11 +13,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.harrysoft.androidbluetoothserial.BluetoothManager;
 import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface;
 import com.meditradent.meditradent.R;
+import com.meditradent.meditradent.di.MyFiles;
 import com.meditradent.meditradent.di.TimerApp;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -28,48 +33,50 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CommunicateViewModel extends AndroidViewModel {
 
+    public File gpxfile;
     // A CompositeDisposable that keeps track of all of our asynchronous tasks
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     // Our BluetoothManager!
     private BluetoothManager bluetoothManager;
-
     // Our Bluetooth Device! When disconnected it is null, so make sure we know that we need to deal with it potentially being null
     @Nullable
     private SimpleBluetoothDeviceInterface deviceInterface;
-
     // The messages feed that the activity sees
-    private MutableLiveData<String> messagesData = new MutableLiveData<>();
+    private final MutableLiveData<String> messagesData = new MutableLiveData<>();
     // The connection status that the activity sees
-    private MutableLiveData<ConnectionStatus> connectionStatusData = new MutableLiveData<>();
+    private final MutableLiveData<ConnectionStatus> connectionStatusData = new MutableLiveData<>();
     // The device name that the activity sees
-    private MutableLiveData<String> deviceNameData = new MutableLiveData<>();
+    private final MutableLiveData<String> deviceNameData = new MutableLiveData<>();
     // The message in the message box that the activity sees
-    private MutableLiveData<String> messageData = new MutableLiveData<>();
-
-    private int numberClassName=1;
-
-    private MutableLiveData<TimerApp> timerLiveData = new MutableLiveData<>();
-
+    private final MutableLiveData<String> messageData = new MutableLiveData<>();
+    private int numberClassName = 1;
+    private final MutableLiveData<TimerApp> timerLiveData = new MutableLiveData<>();
     private boolean isStart;
-
     private boolean saveData;
-
     // Our modifiable record of the conversation
     private StringBuilder messages = new StringBuilder();
-
     // Our configuration
     private String deviceName;
     private String mac;
-
     // A variable to help us not double-connect
     private boolean connectionAttemptedOrMade = false;
     // A variable to help us not setup twice
     private boolean viewModelSetup = false;
 
+    private String username= "";
+
     // Called by the system, this is just a constructor that matches AndroidViewModel.
     public CommunicateViewModel(@NotNull Application application) {
         super(application);
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     // Called in the activity's onCreate(). Checks if it has been called before, and if not, sets up the data.
@@ -155,18 +162,52 @@ public class CommunicateViewModel extends AndroidViewModel {
         }
     }
 
+
     // Adds a received message to the conversation
     private void onMessageReceived(String message) {
-        messagesData.postValue(message);
+
+        Log.i("FUNCTION_DATA", "onMessageReceived --> " + message);
+
+
+        if (isSaveData()) {
+
+            writeDataSample(message);
+            //generateNoteOnSD(message);
+            // writeToFile(message , getApplicationContext());
+        }
+        messagesData.setValue(message);
+
     }
+
+
+    public void writeDataSample(String message) {
+
+        Log.i("FUNCTION_DATA", "writeDataSample  --> " + message);
+
+        // myFiles.append(path, message);
+
+        try {
+
+            FileWriter writer = new FileWriter(gpxfile, true);
+            writer.append(message).append("\n\r");
+            writer.flush();
+            writer.close();
+            // Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     // Adds a sent message to the conversation
     private void onMessageSent(String message) {
         // Add it to the conversation
-        messages.append(getApplication().getString(R.string.you_sent)).append(": ").append(message).append('\n');
-        messagesData.postValue(messages.toString());
+        // messages.append(getApplication().getString(R.string.you_sent)).append(": ").append(message).append('\n');
+        messagesData.postValue(message);
         // Reset the message box
-        messageData.postValue("");
+        //messageData.postValue("");
     }
 
     // Send a message
@@ -181,7 +222,7 @@ public class CommunicateViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         // Dispose any asynchronous operations that are running
-        if (compositeDisposable!=null)
+        if (compositeDisposable != null)
             compositeDisposable.dispose();
 
         // Shutdown bluetooth connections
@@ -189,26 +230,46 @@ public class CommunicateViewModel extends AndroidViewModel {
     }
 
     // Helper method to create toast messages.
-    private void toast(@StringRes int messageResource) { Toast.makeText(getApplication(), messageResource, Toast.LENGTH_LONG).show(); }
+    private void toast(@StringRes int messageResource) {
+        Toast.makeText(getApplication(), messageResource, Toast.LENGTH_LONG).show();
+    }
 
     // Getter method for the activity to use.
-    public LiveData<String> getMessages() { return messagesData; }
+    public LiveData<String> getMessages() {
+        return messagesData;
+    }
 
     // Getter method for the activity to use.
-    public LiveData<ConnectionStatus> getConnectionStatus() { return connectionStatusData; }
+    public LiveData<ConnectionStatus> getConnectionStatus() {
+        return connectionStatusData;
+    }
 
     // Getter method for the activity to use.
-    public LiveData<String> getDeviceName() { return deviceNameData; }
+    public LiveData<String> getDeviceName() {
+        return deviceNameData;
+    }
 
     // Getter method for the activity to use.
-    public LiveData<String> getMessage() { return messageData; }
+    public LiveData<String> getMessage() {
+        return messageData;
+    }
 
 
     public int getNumberClassName() {
         return numberClassName;
     }
 
-    public void setNumberClassName() {
+    public void setNumberClassName(String address) {
+
+
+        String tmp = getUsername()+"_class_";
+
+        try{
+            this.numberClassName = Integer.parseInt(address.substring(tmp.length()));
+        }catch (Exception ignored){
+
+        }
+
         this.numberClassName++;
     }
 
@@ -271,6 +332,9 @@ public class CommunicateViewModel extends AndroidViewModel {
         return isStart;
     }
 
+    public void setStart(boolean start) {
+        isStart = start;
+    }
 
     public boolean isSaveData() {
         return saveData;
@@ -278,10 +342,6 @@ public class CommunicateViewModel extends AndroidViewModel {
 
     public void setSaveData(boolean saveData) {
         this.saveData = saveData;
-    }
-
-    public void setStart(boolean start) {
-        isStart = start;
     }
 
     // An enum that is passed to the activity to indicate the current connection status

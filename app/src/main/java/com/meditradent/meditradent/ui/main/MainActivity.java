@@ -1,7 +1,9 @@
 package com.meditradent.meditradent.ui.main;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,13 +13,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.meditradent.meditradent.ui.chart.CommunicateActivity;
 import com.meditradent.meditradent.R;
 import com.meditradent.meditradent.ui.createUser.CreateActivity;
 
@@ -39,10 +40,13 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         // This method return false if there is an error, so if it does, we should close.
+
+
         if (!viewModel.setupViewModel()) {
             finish();
             return;
         }
+
 
         // Setup our Views
         RecyclerView deviceList = findViewById(R.id.main_devices);
@@ -74,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
     // Called when a button in the action bar is pressed
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // If the back button was pressed, handle it the normal way
@@ -111,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void setupView(BluetoothDevice device) {
+            if (ActivityCompat.checkSelfPermission(MainActivity.this.getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             text1.setText(device.getName());
             text2.setText(device.getAddress());
             layout.setOnClickListener(view -> openCommunicationsActivity(device.getName(), device.getAddress()));

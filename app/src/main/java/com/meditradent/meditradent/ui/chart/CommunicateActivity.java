@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -22,37 +23,30 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.meditradent.meditradent.R;
 import com.meditradent.meditradent.databinding.ActivityCommunicateBinding;
-import com.meditradent.meditradent.databinding.DialogSettingBinding;
 import com.meditradent.meditradent.di.KeyS;
-import com.meditradent.meditradent.di.SoftInputUtils;
 import com.meditradent.meditradent.di.sharepreferences.MyPref;
 import com.meditradent.meditradent.ui.chart.dialog.AskExitDialog;
 import com.meditradent.meditradent.ui.chart.dialog.CreateClassDialog;
 import com.meditradent.meditradent.ui.chart.dialog.SettingChartDialog;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CommunicateActivity extends AppCompatActivity {
 
+
+    private FileOutputStream writer;
     private EditText messageBox;
     private Button sendButton;
-
-
     private ActivityCommunicateBinding binding;
-
     //chart
     private LineChart chart;
-    private ArrayList<Entry> values1, values2, values3;
     //chart
-
+    private ArrayList<Entry> values1, values2, values3;
     private CommunicateViewModel viewModel;
-    private String username;
     private CreateClassDialog dialog;
-    private File gpxfile;
     private String addressClassData = "s";
     private CommunicateViewModel.ConnectionStatus connectionStatusForStart;
     private AskExitDialog dialogExit;
@@ -71,12 +65,14 @@ public class CommunicateActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        intervalChartValue = MyPref.read(KeyS.INTERVAL_VALUE, 9f);
-
-        username = getIntent().getStringExtra("user_name");
-        binding.txtUserName.setText(username);
         // Setup our ViewModel
         viewModel = new ViewModelProvider(this).get(CommunicateViewModel.class);
+
+
+        intervalChartValue = MyPref.read(KeyS.INTERVAL_VALUE, 9f);
+
+        viewModel.setUsername(getIntent().getStringExtra("user_name"));
+        binding.txtUserName.setText(viewModel.getUsername());
 
 
         values1 = new ArrayList<>();
@@ -186,11 +182,13 @@ public class CommunicateActivity extends AppCompatActivity {
         // Start observing the data sent to us by the ViewModel
         viewModel.getConnectionStatus().observe(this, this::onConnectionStatus);
         viewModel.getDeviceName().observe(this, name -> setTitle(getString(R.string.device_name_format, name)));
+
+        // TODO: 7/7/2022 comment observe
         viewModel.getMessages().observe(this, message -> {
             if (TextUtils.isEmpty(message)) {
                 message = getString(R.string.no_messages);
             }
-            //messagesView.setText(message);
+
             setData(message);
         });
         viewModel.getMessage().observe(this, message -> {
@@ -271,13 +269,17 @@ public class CommunicateActivity extends AppCompatActivity {
     private void stopWritingDAta() {
 
 
-        if (viewModel.isSaveData())
-            generateNoteOnSD(addressClassData, "--------------------------  " + "\n\r" +
+        if (viewModel.isSaveData()) {
+
+
+            viewModel.writeDataSample("--------------------------  " + "\n\r" +
                     "Date: " + Calendar.getInstance().getTime() + "\n\r" + "End log file");
 
+
+        }
         viewModel.setSaveData(false);
         viewModel.setStart(false);
-        gpxfile = null;
+        viewModel.gpxfile = null;
         binding.btnStop.setVisibility(View.GONE);
         binding.btnStart.setVisibility(View.VISIBLE);
         binding.txtAddressClassName.setVisibility(View.GONE);
@@ -291,11 +293,11 @@ public class CommunicateActivity extends AppCompatActivity {
     private void showDialogAddClass() {
 
 
-        dialog = new CreateClassDialog(this,this ,  username, viewModel.getNumberClassName(), new CreateClassDialog.OnClickCreateClassListener() {
+        dialog = new CreateClassDialog(this, this, viewModel.getUsername(), viewModel.getNumberClassName(), new CreateClassDialog.OnClickCreateClassListener() {
             @Override
             public void onStart(String address) {
 
-                viewModel.setNumberClassName();
+                viewModel.setNumberClassName(address);
 
                 binding.txtExit.setEnabled(false);
                 binding.txtExit.setAlpha(0.5f);
@@ -309,8 +311,18 @@ public class CommunicateActivity extends AppCompatActivity {
                 binding.btnStop.setVisibility(View.VISIBLE);
                 binding.btnStart.setVisibility(View.GONE);
 
-                generateNoteOnSD(address, "Terminal log file " + username + "\n\r" +
-                        "Date: " + Calendar.getInstance().getTime() + "\n\r" + "--------------------------");
+
+                if (viewModel.gpxfile == null) {
+                    viewModel.gpxfile = new File(
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + getString(R.string.app_name) + "/" + viewModel.getUsername(),
+                            addressClassData + ".txt");
+
+
+                    viewModel.writeDataSample("Terminal log file " + viewModel.getUsername() + "\n\r" +
+                            "Date: " + Calendar.getInstance().getTime() + "\n\r" + "--------------------------");
+
+                }
+
 
                 viewModel.setSaveData(true);
                 dialog.dismiss();
@@ -359,6 +371,13 @@ public class CommunicateActivity extends AppCompatActivity {
         dialogExit.show();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (dialogExit != null) {
+            dialogExit.dismiss();
+        }
+        super.onDestroy();
+    }
 
     private void setData(String message) {
 
@@ -367,15 +386,21 @@ public class CommunicateActivity extends AppCompatActivity {
             return;
 
 
-        if (viewModel.isSaveData())
-            generateNoteOnSD(addressClassData, message);
+        if (!message.contains("R/P/Y/Mx/My/Mz/t:")) {
+            return;
+        }
 
+        Log.i("FUNCTION_DATA", "setData       --> " + message);
+
+
+        message = message.replace("R/P/Y/Mx/My/Mz/t: ", "");
 
         String[] parts = message.split(",");
         String part1 = parts[0]; // 004
         String part2 = parts[1];
         String part3 = parts[2];
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) {
+            Log.i("INITCHart", "setData: if");
 
             values1.add(new Entry(chart.getLineData().getEntryCount(), Float.parseFloat(part1)));
             values2.add(new Entry(chart.getLineData().getEntryCount(), Float.parseFloat(part2)));
@@ -401,6 +426,8 @@ public class CommunicateActivity extends AppCompatActivity {
             chart.moveViewToX(chart.getLineData().getEntryCount());
 
         } else {
+
+            Log.i("INITCHart", "setData: else");
             // create a dataset and give it a type
             setX = new LineDataSet(values1, "X");
 
@@ -452,23 +479,6 @@ public class CommunicateActivity extends AppCompatActivity {
 
             // set data
             chart.setData(data);
-        }
-    }
-
-    public void generateNoteOnSD(String sFileName, String sBody) {
-        try {
-            if (gpxfile == null)
-                gpxfile = new File(
-                        Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getString(R.string.app_name) + "/" + username,
-                        sFileName + ".txt");
-
-            FileWriter writer = new FileWriter(gpxfile, true);
-            writer.append(sBody).append("\n\r");
-            writer.flush();
-            writer.close();
-            // Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
